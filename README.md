@@ -8,6 +8,7 @@ An interactive Streamlit app for exploring how K-Means clustering assigns data p
 - [K-Means in brief](#k-means-in-brief)
 - [Simulation features](#simulation-features)
 - [Datasets](#datasets)
+- [Supported Formats](#supported-formats)
 - [Installation and setup](#installation-and-setup)
 - [Run the app](#run-the-app)
 - [Project structure](#project-structure)
@@ -34,13 +35,22 @@ The algorithm calculates **within-cluster sum of squares (WCSS)**, the sum of sq
 
 | Feature | What it does |
 | --- | --- |
-| Dataset selection | Choose the bundled customer workbook, the generated example, or a supported file placed in `data/`. |
+| Dataset selection | Choose the bundled customer workbook, the generated example, or a [supported file](#supported-formats) placed in `data/`. |
 | Feature selection | Choose two numeric columns to use as the X and Y features. |
 | Clustering controls | Set K, the maximum iteration count, and the convergence tolerance. |
 | Iteration navigation | Inspect the initial state and move through completed iterations with the slider or Previous/Next buttons. |
 | Cluster visualization | View point assignments, previous and updated centroids, and arrows showing centroid movement. |
 | Progress details | Follow WCSS, per-centroid movement, convergence status, and centroid history. |
 | Final results | View final WCSS, centroids, iteration count, and cluster distribution. |
+
+## Supported formats
+The simulation supports the following file formats:
+
+- `.csv` – Comma-separated values
+- `.xlsx` – Excel workbook
+- `.xls` – Excel legacy workbook
+
+Place your dataset in the `data/` directory to be able to select it in the application.
 
 ### Available controls
 
@@ -58,13 +68,12 @@ The repository includes [`data/Mall Customers.xlsx`](data/Mall%20Customers.xlsx)
 
 The app also creates a synthetic **Generated Dataset** with 300 two-dimensional samples, five centers, and a cluster standard deviation of 1.5.
 
+
 ### Add another dataset
 
 Place a CSV (`.csv`) or Excel (`.xlsx` or `.xls`) file directly inside `data/`. The app discovers supported files in that folder and makes them available in the dataset selector. Only numeric columns can be selected. Rows with non-finite values in either selected feature are excluded.
 
 For meaningful results, choose measured features rather than numeric identifiers such as customer IDs. The current checkout contains the customer workbook as its only dataset file; the app's generated example is available separately.
-
-No dataset downloader script is included in the current project checkout. The bundled workbook is available immediately after setup and does not require a Kaggle download.
 
 ## Installation and setup
 
@@ -98,7 +107,11 @@ From the project root, start Streamlit:
 streamlit run app.py
 ```
 
-Open the local URL printed by Streamlit in your browser.
+After running the command, Streamlit will display a local URL in your terminal (usually http://localhost:8501).
+
+Copy this URL and paste it into your web browser (Chrome, Firefox, Edge, etc.) to open the application.
+
+Note: Keep the terminal open while using the application. Closing it will stop the Streamlit server.
 
 ## Use the simulator
 
@@ -107,7 +120,6 @@ Open the local URL printed by Streamlit in your browser.
 3. Click **Run Simulation** in the sidebar.
 4. Use the iteration slider or Previous/Next buttons to inspect the recorded steps.
 
-The app does not provide a random seed control. Initial centroids and the generated dataset may vary between runs.
 
 ## Project structure
 
@@ -119,13 +131,14 @@ The app does not provide a random seed control. Initial centroids and the genera
 ├── README.md               # Project documentation
 └── data/
     └── Mall Customers.xlsx # Bundled customer dataset
+    ...add your your own datasets here
 ```
 
 ## Implementation notes
 
 - The implementation clusters exactly two features at a time; it does not cluster all numeric columns simultaneously.
 - Features are used in their original units. K-Means is sensitive to feature scale, so a feature with a larger numeric range can dominate the distance calculation. Consider scaling features before comparing differently scaled measurements.
-- Initial centroids are randomly selected from the data points. The implementation does not use k-means++ or repeat runs to select the best WCSS result.
+- Initial centroids are randomly selected from the data points. The implementation does not use k-means++ or repeat runs to select the best WCSS result. The main idea is to demonstrate the algorithm's behavior rather than to optimize clustering quality.
 - Empty clusters are reinitialized using a point farthest from the current centroids. Multiple empty clusters may select the same point, and WCSS is not guaranteed to decrease on every iteration.
 - The convergence tolerance is applied to the sum of all centroid movements, not to each centroid separately.
 - The app creates a new model for each run. When using `KMeans` directly, create a new instance for each fit; the class does not fully reset its convergence state when `fit()` is called again.
@@ -139,4 +152,7 @@ No project license file is currently included. Add a license for the code before
 
 ## Screenshots
 
-> **Screenshot placeholder:** Add a screenshot or GIF of the running simulator here.
+![Cluster Visualization](images/im1.png)
+![Algorithm Details](images/im2.png)
+
+
